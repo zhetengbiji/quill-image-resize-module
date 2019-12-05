@@ -21,12 +21,6 @@ module.exports = {
                         "plugins": ["babel-plugin-transform-class-properties"]
                     }
                 }]
-            },
-            {
-                test: /\.svg$/,
-                use: [{
-                    loader: 'raw-loader'
-                }]
             }
         ]
     }

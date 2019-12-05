@@ -124,7 +124,7 @@ export default class ImageResize {
 
         // Create and add the overlay
         this.overlay = document.createElement('div');
-        Object.assign(this.overlay.style, this.options.overlayStyles);
+        this.overlay.classList.add('ql-image-overlay');
 
         this.quill.root.parentNode.appendChild(this.overlay);
 

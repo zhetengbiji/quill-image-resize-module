@@ -1,5 +1,7 @@
 import { BaseModule } from './BaseModule';
 
+const hasTouchSupport = navigator.maxTouchPoints
+
 export class Resize extends BaseModule {
     onCreate = () => {
         // track resize handles
@@ -20,8 +22,8 @@ export class Resize extends BaseModule {
     };
 
     positionBoxes = () => {
-        const handleXOffset = `${-parseFloat(this.options.handleStyles.width) / 2}px`;
-        const handleYOffset = `${-parseFloat(this.options.handleStyles.height) / 2}px`;
+        const handleXOffset = '-6px';
+        const handleYOffset = '-6px';
 
         // set the top and left for each drag handle
         [
@@ -37,17 +39,13 @@ export class Resize extends BaseModule {
     addBox = (cursor) => {
         // create div element for resize handle
         const box = document.createElement('div');
+        box.classList.add('ql-image-handle');
 
         // Star with the specified styles
-        Object.assign(box.style, this.options.handleStyles);
         box.style.cursor = cursor;
 
-        // Set the width/height to use 'px'
-        box.style.width = `${this.options.handleStyles.width}px`;
-        box.style.height = `${this.options.handleStyles.height}px`;
-
         // listen for mousedown on each box
-        box.addEventListener('mousedown', this.handleMousedown, false);
+        box.addEventListener(hasTouchSupport ? 'touchstart' : 'mousedown', this.handleMousedown, false);
         // add drag handle to document
         this.overlay.appendChild(box);
         // keep track of drag handle
@@ -58,22 +56,23 @@ export class Resize extends BaseModule {
         // note which box
         this.dragBox = evt.target;
         // note starting mousedown position
-        this.dragStartX = evt.clientX;
+        const info = hasTouchSupport ? evt.changedTouches[0] : evt
+        this.dragStartX = info.clientX;
         // store the width before the drag
         this.preDragWidth = this.img.width || this.img.naturalWidth;
         // set the proper cursor everywhere
         this.setCursor(this.dragBox.style.cursor);
         // listen for movement and mouseup
-        document.addEventListener('mousemove', this.handleDrag, false);
-        document.addEventListener('mouseup', this.handleMouseup, false);
+        document.addEventListener(hasTouchSupport ? 'touchmove' : 'mousemove', this.handleDrag, false);
+        document.addEventListener(hasTouchSupport ? 'touchend' : 'mouseup', this.handleMouseup, false);
     };
 
     handleMouseup = () => {
         // reset cursor everywhere
         this.setCursor('');
         // stop listening for movement and mouseup
-        document.removeEventListener('mousemove', this.handleDrag);
-        document.removeEventListener('mouseup', this.handleMouseup);
+        document.removeEventListener(hasTouchSupport ? 'touchmove' : 'mousemove', this.handleDrag);
+        document.removeEventListener(hasTouchSupport ? 'touchend' : 'mouseup', this.handleMouseup);
     };
 
     handleDrag = (evt) => {
@@ -82,7 +81,8 @@ export class Resize extends BaseModule {
             return;
         }
         // update image size
-        const deltaX = evt.clientX - this.dragStartX;
+        const info = hasTouchSupport ? evt.changedTouches[0] : evt
+        const deltaX = info.clientX - this.dragStartX;
         if (this.dragBox === this.boxes[0] || this.dragBox === this.boxes[3]) {
             // left-side resize handler; dragging right shrinks image
             this.img.width = Math.round(this.preDragWidth - deltaX);

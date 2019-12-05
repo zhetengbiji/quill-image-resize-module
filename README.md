@@ -15,7 +15,7 @@ a module that enables copy-paste and drag/drop for Quill.
 
 ```javascript
 import Quill from 'quill';
-import { ImageResize } from 'quill-image-resize-module';
+import { ImageResize } from 'uill-image-resize-mp';
 
 Quill.register('modules/imageResize', ImageResize);
 
@@ -35,7 +35,7 @@ const quill = new Quill(editor, {
 Copy image-resize.min.js into your web root or include from node_modules
 
 ```html
-<script src="/node_modules/quill-image-resize-module/image-resize.min.js"></script>
+<script src="/node_modules/uill-image-resize-mp/image-resize.min.js"></script>
 ```
 
 ```javascript
@@ -166,7 +166,7 @@ the module setup.
 For example,
 
 ```javascript
-import { Resize, BaseModule } from 'quill-image-resize-module';
+import { Resize, BaseModule } from 'uill-image-resize-mp';
 
 class MyModule extends BaseModule {
     // See src/modules/BaseModule.js for documentation on the various lifecycle callbacks
