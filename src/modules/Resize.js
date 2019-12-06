@@ -2,6 +2,16 @@ import { BaseModule } from './BaseModule';
 
 const hasTouchSupport = navigator.maxTouchPoints
 
+let passiveEvents = false
+try {
+    const opts = Object.defineProperty({}, 'passive', {
+        get: function () {
+            passiveEvents = { passive: false };
+        }
+    });
+    window.addEventListener('test', null, opts);
+} catch (e) { };
+
 export class Resize extends BaseModule {
     onCreate = () => {
         // track resize handles
@@ -63,7 +73,7 @@ export class Resize extends BaseModule {
         // set the proper cursor everywhere
         this.setCursor(this.dragBox.style.cursor);
         // listen for movement and mouseup
-        document.addEventListener(hasTouchSupport ? 'touchmove' : 'mousemove', this.handleDrag, false);
+        document.addEventListener(hasTouchSupport ? 'touchmove' : 'mousemove', this.handleDrag, passiveEvents);
         document.addEventListener(hasTouchSupport ? 'touchend' : 'mouseup', this.handleMouseup, false);
     };
 
@@ -91,6 +101,7 @@ export class Resize extends BaseModule {
             this.img.width = Math.round(this.preDragWidth + deltaX);
         }
         this.requestUpdate();
+        evt.preventDefault();
     };
 
     setCursor = (value) => {
